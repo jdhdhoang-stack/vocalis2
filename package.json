@@ -13,11 +13,10 @@
     "@google/genai": "latest",
     "@tailwindcss/vite": "^4.2.2",
     "lucide-react": "^0.577.0",
-    "mammoth": "^1.12.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "tailwindcss": "^4.2.2",
-    "uuid": "^13.0.0"
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
