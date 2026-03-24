@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "python3 main.py",
     "start": "python3 main.py",
-    "lint": "python3 -m py_compile main.py services.py"
+    "lint": "python3 -c 'import flask; print(\"Flask OK\")' && python3 -m py_compile main.py services.py",
+    "postinstall": "python3 -m pip install fastapi uvicorn jinja2 python-docx python-multipart"
   },
   "dependencies": {
     "@google/genai": "latest",

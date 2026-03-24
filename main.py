@@ -15,9 +15,13 @@ os.makedirs("templates", exist_ok=True)
 
 templates = Jinja2Templates(directory="templates")
 
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
+
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return "<h1>Server is running</h1><p>If you see this, the basic FastAPI server is working.</p>"
 
 @app.post("/api/process-text")
 async def process_text(request: Request):
