@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocalis: Hệ thống Tổng hợp Âm thanh Chuyên nghiệp</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .tab-active { background-color: #2563eb; color: white; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+        .tab-inactive { color: #4b5563; }
+        .tab-inactive:hover { background-color: #f3f4f6; color: #111827; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-gray-50">
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <svg class="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+                </svg>
+                <h1 class="text-xl font-bold tracking-tight text-gray-900">Vocalis</h1>
+                <span class="hidden sm:inline-block px-2 py-0.5 bg-gray-100 text-gray-600 text-[10px] font-bold rounded uppercase tracking-wider">Pro Suite (Python)</span>
+            </div>
+
+            <nav class="flex items-center gap-1">
+                <button onclick="switchTab('tts')" id="tab-tts" class="tab-active flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all rounded-lg">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                    <span>Tổng hợp</span>
+                </button>
+                <button onclick="switchTab('filter')" id="tab-filter" class="tab-inactive flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all rounded-lg">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                    <span>Lọc văn bản</span>
+                </button>
+                <div class="w-px h-6 bg-gray-200 mx-2"></div>
+                <button onclick="switchTab('settings')" id="tab-settings" class="tab-inactive flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all rounded-lg">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+                    <span>Cài đặt</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto p-6 md:p-10">
+        <!-- TTS Tab -->
+        <div id="content-tts" class="space-y-6">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-semibold text-gray-900">Văn bản đầu vào</h2>
+                        <div class="flex gap-2">
+                            <input type="file" id="file-upload" class="hidden" accept=".txt,.docx" onchange="handleFileUpload(event)">
+                            <button onclick="document.getElementById('file-upload').click()" class="px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">Tải file lên</button>
+                            <button onclick="document.getElementById('input-text').value = ''" class="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">Xóa sạch</button>
+                        </div>
+                    </div>
+                    <textarea id="input-text" class="w-full h-64 p-4 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none" placeholder="Nhập hoặc dán văn bản của bạn tại đây..."></textarea>
+                </div>
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-between items-center">
+                    <div class="flex gap-4 items-center">
+                        <div class="flex flex-col">
+                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Giọng đọc</label>
+                            <select id="speaker-select" class="text-sm font-medium bg-white border border-gray-200 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 outline-none">
+                                <option value="vi-VN-Standard-A">Nữ Miền Bắc (A)</option>
+                                <option value="vi-VN-Standard-B">Nam Miền Bắc (B)</option>
+                                <option value="vi-VN-Standard-C">Nữ Miền Nam (C)</option>
+                                <option value="vi-VN-Standard-D">Nam Miền Nam (D)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button onclick="startProcessing()" id="btn-process" class="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 shadow-md transition-all flex items-center gap-2">
+                        <span>Bắt đầu xử lý</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div id="results-panel" class="hidden space-y-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-gray-900">Kết quả xử lý</h3>
+                    <div class="flex gap-2">
+                        <button onclick="downloadAll()" class="px-3 py-1.5 text-xs font-medium text-green-600 bg-green-50 hover:bg-green-100 rounded-lg transition-colors">Tải xuống tất cả</button>
+                    </div>
+                </div>
+                <div id="chunks-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Chunks will be added here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Tab -->
+        <div id="content-filter" class="hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">Văn bản cần lọc</h2>
+                        <textarea id="filter-input" class="w-full h-96 p-4 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none" placeholder="Dán văn bản thô tại đây để làm sạch..."></textarea>
+                    </div>
+                </div>
+                <div class="space-y-6">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h2 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Tùy chọn lọc</h2>
+                        <div class="space-y-3">
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" id="opt-junk" checked class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                <span class="text-sm text-gray-600 group-hover:text-gray-900">Xóa khối rác (Discord, Ads...)</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" id="opt-chapter" checked class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                <span class="text-sm text-gray-600 group-hover:text-gray-900">Xóa tiêu đề chương</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" id="opt-endnum" checked class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                <span class="text-sm text-gray-600 group-hover:text-gray-900">Xóa số cuối dòng</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" id="opt-large" checked class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                <span class="text-sm text-gray-600 group-hover:text-gray-900">Chuyển số lớn sang chữ</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" id="opt-white" checked class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                <span class="text-sm text-gray-600 group-hover:text-gray-900">Chuẩn hóa khoảng trắng</span>
+                            </label>
+                        </div>
+                        <button onclick="applyFilter()" class="w-full mt-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 shadow-md transition-all">Áp dụng lọc</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="content-settings" class="hidden max-w-2xl mx-auto space-y-6">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+                <h2 class="text-xl font-bold text-gray-900 mb-6">Cấu hình hệ thống</h2>
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">App Key</label>
+                        <input type="password" id="setting-appkey" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Nhập App Key của bạn...">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Access Token</label>
+                        <input type="password" id="setting-token" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Nhập Access Token của bạn...">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Max Chars/Chunk</label>
+                            <input type="number" id="setting-max" value="1500" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Min Merge Chars</label>
+                            <input type="number" id="setting-min" value="30" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                    </div>
+                    <button onclick="saveSettings()" class="w-full py-3 bg-gray-900 text-white font-bold rounded-lg hover:bg-black transition-all">Lưu cấu hình</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-8 bg-white border-t border-gray-200">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-xs text-gray-500 font-medium uppercase tracking-widest">
+                VOCALIS AUDIO ENGINE (PYTHON) • v1.4.0
+            </p>
+            <div class="flex gap-6">
+                <a href="#" class="text-xs text-gray-400 hover:text-gray-600 transition-colors">Tài liệu</a>
+                <a href="#" class="text-xs text-gray-400 hover:text-gray-600 transition-colors">Hỗ trợ</a>
+                <a href="#" class="text-xs text-gray-400 hover:text-gray-600 transition-colors">Bảo mật</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const WSS_URL = "wss://nls-gateway.cn-shanghai.aliyuncs.com/ws/v1";
+        let chunks = [];
+        let processingResults = [];
+
+        // Tab switching
+        function switchTab(tab) {
+            ['tts', 'filter', 'settings'].forEach(t => {
+                document.getElementById(`tab-${t}`).className = t === tab ? 'tab-active flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all rounded-lg' : 'tab-inactive flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all rounded-lg';
+                document.getElementById(`content-${t}`).classList.toggle('hidden', t !== tab);
+            });
+        }
+
+        // Settings
+        function loadSettings() {
+            const s = JSON.parse(localStorage.getItem('vocalis_settings') || '{}');
+            document.getElementById('setting-appkey').value = s.appkey || '';
+            document.getElementById('setting-token').value = s.token || '';
+            document.getElementById('setting-max').value = s.max_chars || 1500;
+            document.getElementById('setting-min').value = s.min_chars || 30;
+        }
+
+        function saveSettings() {
+            const s = {
+                appkey: document.getElementById('setting-appkey').value,
+                token: document.getElementById('setting-token').value,
+                max_chars: parseInt(document.getElementById('setting-max').value),
+                min_chars: parseInt(document.getElementById('setting-min').value)
+            };
+            localStorage.setItem('vocalis_settings', JSON.stringify(s));
+            alert('Đã lưu cấu hình!');
+        }
+
+        // File Upload
+        async function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const res = await fetch('/api/upload-file', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.content) {
+                    document.getElementById('input-text').value = data.content;
+                } else {
+                    alert(data.error || 'Lỗi tải file');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Lỗi kết nối server');
+            }
+        }
+
+        // Processing
+        async function startProcessing() {
+            const text = document.getElementById('input-text').value;
+            if (!text.trim()) return alert('Vui lòng nhập văn bản');
+
+            const s = JSON.parse(localStorage.getItem('vocalis_settings') || '{}');
+            if (!s.appkey || !s.token) return alert('Vui lòng cấu hình App Key và Token trong Cài đặt');
+
+            const btn = document.getElementById('btn-process');
+            btn.disabled = true;
+            btn.innerHTML = 'Đang xử lý...';
+
+            try {
+                const res = await fetch('/api/process-text', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        text,
+                        max_chars: s.max_chars || 1500,
+                        min_chars: s.min_chars || 30
+                    })
+                });
+                const data = await res.json();
+                chunks = data.chunks;
+                displayChunks();
+            } catch (err) {
+                console.error(err);
+                alert('Lỗi xử lý văn bản');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Bắt đầu xử lý';
+            }
+        }
+
+        function displayChunks() {
+            const container = document.getElementById('chunks-container');
+            const panel = document.getElementById('results-panel');
+            container.innerHTML = '';
+            panel.classList.remove('hidden');
+            processingResults = [];
+
+            chunks.forEach((text, index) => {
+                const card = document.createElement('div');
+                card.className = 'bg-white p-4 rounded-xl border border-gray-200 shadow-sm space-y-3';
+                card.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Đoạn ${index + 1}</span>
+                        <span id="status-${index}" class="text-[10px] font-bold text-yellow-600 bg-yellow-50 px-2 py-0.5 rounded uppercase">Chờ...</span>
+                    </div>
+                    <p class="text-xs text-gray-600 line-clamp-2">${text}</p>
+                    <div id="audio-container-${index}" class="hidden">
+                        <audio id="audio-${index}" controls class="w-full h-8"></audio>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="synthesizeChunk(${index})" id="btn-synth-${index}" class="flex-grow py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">Tổng hợp</button>
+                        <button id="btn-dl-${index}" disabled class="px-3 py-1.5 text-xs font-semibold text-gray-400 bg-gray-50 rounded-lg cursor-not-allowed">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // TTS Synthesis logic (WebSocket)
+        function synthesizeChunk(index) {
+            const text = chunks[index];
+            const speaker = document.getElementById('speaker-select').value;
+            const s = JSON.parse(localStorage.getItem('vocalis_settings') || '{}');
+            const status = document.getElementById(`status-${index}`);
+            const btn = document.getElementById(`btn-synth-${index}`);
+            
+            status.innerHTML = 'Đang chạy...';
+            status.className = 'text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded uppercase';
+            btn.disabled = true;
+
+            const ws = new WebSocket(WSS_URL);
+            const audioChunks = [];
+
+            ws.onopen = () => {
+                const payload = {
+                    text,
+                    speaker,
+                    audio_config: { bit_rate: 64000, sample_rate: 24000, format: "mp3" }
+                };
+                const frame = {
+                    appkey: s.appkey,
+                    token: s.token,
+                    namespace: "TTS",
+                    event: "StartTask",
+                    version: "sdk_v1",
+                    payload: JSON.stringify(payload)
+                };
+                ws.send(JSON.stringify(frame));
+            };
+
+            ws.onmessage = async (event) => {
+                if (event.data instanceof Blob) {
+                    audioChunks.push(event.data);
+                } else if (typeof event.data === 'string') {
+                    const data = JSON.parse(event.data);
+                    if (data.event === 'Error' || data.event === 'Failed') {
+                        status.innerHTML = 'Lỗi';
+                        status.className = 'text-[10px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded uppercase';
+                        btn.disabled = false;
+                        ws.close();
+                    }
+                }
+            };
+
+            ws.onclose = () => {
+                if (audioChunks.length > 0) {
+                    const blob = new Blob(audioChunks, { type: 'audio/mpeg' });
+                    const url = URL.createObjectURL(blob);
+                    const audio = document.getElementById(`audio-${index}`);
+                    audio.src = url;
+                    document.getElementById(`audio-container-${index}`).classList.remove('hidden');
+                    status.innerHTML = 'Xong';
+                    status.className = 'text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded uppercase';
+                    
+                    const dlBtn = document.getElementById(`btn-dl-${index}`);
+                    dlBtn.disabled = false;
+                    dlBtn.className = 'px-3 py-1.5 text-xs font-semibold text-green-600 bg-green-50 hover:bg-green-100 rounded-lg transition-colors';
+                    dlBtn.onclick = () => {
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `vocalis_chunk_${index + 1}.mp3`;
+                        a.click();
+                    };
+                    processingResults[index] = { url, blob };
+                }
+            };
+        }
+
+        // Filter logic
+        async function applyFilter() {
+            const text = document.getElementById('filter-input').value;
+            if (!text.trim()) return alert('Vui lòng nhập văn bản cần lọc');
+
+            const options = {
+                removeJunkBlocks: document.getElementById('opt-junk').checked,
+                removeChapterHeader: document.getElementById('opt-chapter').checked,
+                removeEndNumbers: document.getElementById('opt-endnum').checked,
+                convertLargeNumbers: document.getElementById('opt-large').checked,
+                removeWhitespace: document.getElementById('opt-white').checked
+            };
+
+            try {
+                const res = await fetch('/api/filter-text', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text, options })
+                });
+                const data = await res.json();
+                document.getElementById('filter-input').value = data.result;
+            } catch (err) {
+                console.error(err);
+                alert('Lỗi lọc văn bản');
+            }
+        }
+
+        window.onload = loadSettings;
+    </script>
+</body>
+</html>

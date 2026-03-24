@@ -4,10 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "lint": "tsc --noEmit"
+    "dev": "python3 main.py",
+    "start": "python3 main.py",
+    "lint": "python3 -m py_compile main.py services.py"
   },
   "dependencies": {
     "@google/genai": "latest",
